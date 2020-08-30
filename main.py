@@ -78,14 +78,14 @@ def editorSnakeBodyParts(snakeBodyParts, snakeHead):
     oldHeadPos = list((snakeHead[0], snakeHead[1]))
     numOfIndexOfSnakeBodyParts = len(snakeBodyParts.keys())
     while numOfIndexOfSnakeBodyParts > 0:
-        #puts the snake's head for the first index of the snake's body parts
+        #put the snake's head for the first index of the snake's body parts
         if numOfIndexOfSnakeBodyParts == 1:
             snakeBodyParts[1] = oldHeadPos
         else:
             #editing list of snake body parts for drawing
-            newValues = numOfIndexOfSnakeBodyParts - 1
-            newValues = list(snakeBodyParts.values())[newValues - 1]
-            snakeBodyParts[numOfIndexOfSnakeBodyParts] = newValues
+            newValue = numOfIndexOfSnakeBodyParts - 1
+            newValue = list(snakeBodyParts.values())[newValue - 1]
+            snakeBodyParts[numOfIndexOfSnakeBodyParts] = newValue
         numOfIndexOfSnakeBodyParts -= 1
 
 
@@ -109,38 +109,42 @@ def crash(snakeHead, running, snakeBodyParts, winx, winy):
     return running
 
 
-#food function choose random food position from possible states
-def food(lIndPP, fList):
-    #randomly select index from list of possible food positions
-    findex = random.randint(0, lIndPP)
-    #choose specified index from list of possible food position
-    lFPos = fList[findex]
-    return lFPos
-
-
 #making possible positions of food function generate possible position of food
-def makingPPF(winx, snakeBodyParts, snakeHead, winy, fList):
+def food(winx, snakeBodyParts, snakeHead, winy, fList):
     #editing fList and adding all possible positions
     for xpos in range(winx + 1):
       if xpos % 25 == 0 and xpos % 50 == 25:
           for ypos in range(winy + 1):
               if ypos % 25 == 0 and ypos % 50 == 25:
-                  fList.append([xpos, ypos])
+                  if [xpos, ypos] not in fList:
+                      fList.append([xpos, ypos])
     #removing all parts of snake from possible positions
     for value in snakeBodyParts.values():
         if value in fList:
             fList.remove(value)
-    fList.remove(snakeHead)
+    if snakeHead in fList:
+        fList.remove(snakeHead)
 
-    return fList
+    #last index of possible positions
+    lIndPP = fList[-1]
+    #find the number of it index
+    lIndPP = fList.index(lIndPP)
+    #randomly select index from list of possible food positions
+    findex = random.randint(0, lIndPP)
+    #choose specified index from list of possible food position
+    lFPos = fList[findex]
+
+    return lFPos
 
 
 #snake function draw snake head
 def snakeDrawer(snakeHead, snakeBodyParts, win, running):
-    pygame.draw.circle(win, (255, 255, 0), (snakeHead[0], snakeHead[1]), 25)
-    #drawing snake body
-    for values in snakeBodyParts.values():
-         pygame.draw.circle(win, (0, 255, 255), (values[0], values[1]), 25)
+    #draw snake head
+    if running == True:
+        pygame.draw.circle(win, (255, 255, 0), snakeHead, 25)
+        #drawing snake body
+        for value in snakeBodyParts.values():
+             pygame.draw.circle(win, (0, 255, 255), value, 25)
 
 
 def changeKey(key, route1, route2):
@@ -166,21 +170,11 @@ while running:
 
 
     if nFoodGen == 0:
-        fList = makingPPF(winx, snakeBodyParts, snakeHead, winy, fList)
-        #making possible positions of food
-        old_snake_head = snakeHead
-        #last index of possible positions
-        lIndPP = fList[-1]
-        lIndPP = fList.index(lIndPP)
-        lFPos = food(lIndPP, fList)
+        lFPos = food(winx, snakeBodyParts, snakeHead, winy, fList)
         nFoodGen += 1
     if contact == True:
-        fList = makingPPF(winx, snakeBodyParts, snakeHead, winy, fList)
-        lIndPP = fList[-1]
-        lIndPP = fList.index(lIndPP)
-        lFPos = food(lIndPP, fList)
+        lFPos = food(winx, snakeBodyParts, snakeHead, winy, fList)
         contact = False
-        nFoodGen += 1
 
 
     if nos > 1:
@@ -190,33 +184,22 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        keyChange = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                try:
+            try:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     key, keyChange = changeKey(key, "down", "up")
-                except TypeError:
-                    pass
-            elif event.key == pygame.K_DOWN:
-                try:
+                elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     key, keyChange = changeKey(key, "up", "down")
-                except TypeError:
-                    pass
-            elif event.key == pygame.K_RIGHT:
-                try:
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     key, keyChange = changeKey(key, "left", "right")
-                except TypeError:
-                    pass
-            elif event.key == pygame.K_LEFT:
-                try:
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     key, keyChange = changeKey(key, "right", "left")
-                except TypeError:
-                    pass
+            except TypeError:
+                pass
             if keyChange == True:
                 bibList[number % 4].play()
                 number += 1
-            keyChange = False
-            break
+                keyChange = False
 
 
     #change position of snake head
