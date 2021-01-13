@@ -182,22 +182,22 @@ while running:
             running = False
         keyChange = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP or event.key == pygame.K_w:
                 try:
                     key , keyChange = change_direction_of_snake(key , "down" , "up")
                 except TypeError:
                     pass
-            elif event.key == pygame.K_DOWN:
+            elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                 try:
                     key , keyChange = change_direction_of_snake(key , "up" , "down")
                 except TypeError:
                     pass
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                 try:
                     key , keyChange = change_direction_of_snake(key , "left" , "right")
                 except TypeError:
                     pass
-            elif event.key == pygame.K_LEFT:
+            elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
                 try:
                     key , keyChange = change_direction_of_snake(key , "right" , "left")
                 except TypeError:
