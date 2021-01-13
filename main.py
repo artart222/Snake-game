@@ -171,7 +171,7 @@ running = True
 while running:
     fps_clock.tick(10)
     win.blit(background, (0, 0))
-    #score_board()
+    score_board()
 
 
     win.blit(food_image , (food_position[0] - 25 , food_position[1] - 25))
